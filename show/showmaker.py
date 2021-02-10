@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import time
 
 
+plt.ion()
+
+
 def show(output_lists):
     lists_cells = [output_lists]
     i = 0
@@ -26,5 +29,6 @@ def show(output_lists):
             j += 1
         lists_cells = list_
         i += 1
-    plt.show()
-    time.sleep(1)
+    plt.pause(0.1)
+    plt.clf()
+    plt.close()
