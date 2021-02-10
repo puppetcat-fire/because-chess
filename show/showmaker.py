@@ -1,10 +1,6 @@
 # [{"cell": cell_up, "strength": 0.1, "count": 0}, {"cell": cell_down, "strength": 0.1, "count": 0}]
 
 import matplotlib.pyplot as plt
-import time
-
-
-plt.ion()
 
 
 def show(output_lists):
