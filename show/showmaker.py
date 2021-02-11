@@ -17,11 +17,11 @@ def show(output_lists, energy_sum):
                 for cell_up in cell["cell"].link_cells:
                     print(cell_up)
                     if energy >= 0.5:
-                        plt.plot([j, k], [i, i + 1], 'ro-', linewidth=cell["strength"]*10)  # red - r, green - g, blue - b
+                        plt.plot([j, k], [i, i + 1], 'ro-', linewidth=cell_up["strength"]*10)  # red - r, green - g, blue - b
                     elif energy >= 0.3:
-                        plt.plot([j, k], [i, i + 1], 'go-', linewidth=cell["strength"]*10)  # red - r, green - g, blue - b
+                        plt.plot([j, k], [i, i + 1], 'go-', linewidth=cell_up["strength"]*10)  # red - r, green - g, blue - b
                     else:
-                        plt.plot([j, k], [i, i + 1], 'bo-', linewidth=cell["strength"]*10)  # red - r, green - g, blue - b
+                        plt.plot([j, k], [i, i + 1], 'bo-', linewidth=cell_up["strength"]*10)  # red - r, green - g, blue - b
                     k += 1
                 list_.append(cell["cell"].link_cells)
                 j += 1
@@ -29,4 +29,4 @@ def show(output_lists, energy_sum):
         i += 1
     plt.pause(0.1)
     plt.clf()
-    plt.close()
+    # plt.close()
