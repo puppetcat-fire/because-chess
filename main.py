@@ -46,7 +46,7 @@ def eat_(energy, cells_list):
 main_class = Main_class()
 input_cells = [{"cell": Cell_input(), "strength": 0.1, "count": 0} for i in range(2)]
 output_cells = [{"cell": Cell_output([{"cell": Cell(input_cells), "strength": 0.1, "count": 0}]), "strength": 1, "count": 0} for i in range(1)]
-energy_sum = 100
+energy_sum = 10
 energy_sum = eat_(energy_sum, output_cells)
 done = 0
 for i in range(1000):
@@ -68,4 +68,4 @@ for i in range(1000):
     for i in range(1):
         done = output_cells[i]["cell"].output_info()
     energy_sum = eat_(energy_sum, output_cells)
-    show(output_cells)
+    show(output_cells, energy_sum)

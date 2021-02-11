@@ -8,7 +8,7 @@ class Cell:
     def run(self):
         # for cell in self.link_cells:
         #     print(cell["strength"])
-        self.state = 0
+        self.energy -= 0.01
         if sum([cell["strength"] for cell in self.link_cells]) > 0.7:
             self._update_link()
         for cell in self.link_cells:
@@ -17,7 +17,7 @@ class Cell:
                 cell["count"] += cell["strength"]
                 self.energy -= cell["strength"]
         self._check_energy()
-        # 前向传播（能量不足？）10:1等比例往下拆连接强度。
+        # 前向传播（能量不足？）100:1等比例往下拆连接强度。
         if sum([cell["count"] for cell in self.link_cells]) > 0.7:
             self.energy -= 1
             if self.energy >= 1:
@@ -36,8 +36,8 @@ class Cell:
     def _check_energy(self):
         if self.energy < 0:
             for cell in self.link_cells:
-
-                cell["strength"] += (self.energy) / (10 * len(self.link_cells))
+                cell["strength"] += (self.energy) / (100 * len(self.link_cells))
+                self.energy = 0
                 self._check_link()
 
     def _check_link(self):
@@ -46,9 +46,9 @@ class Cell:
                 for cell_ in cell["cell"].link_cells:
                     self.link_cells.append(cell_)
                 self.energy += cell["cell"].energy
-                self.energy += 10 * cell["strength"]
+                self.energy += 100 * cell["strength"]
                 self.link_cells.remove(cell)
-                self._check_energy()
+        self._check_energy()
 
     def eat(self, add_enargy):
         # 补齐能量 广度优先遍历
@@ -64,12 +64,15 @@ class Cell:
         # 将输进来的能量按激活比例转化到每个项上去。
         sum_count = sum([cell["count"] for cell in self.link_cells])
         for cell in self.link_cells:
-            cell["strength"] += cell["count"] * add_energy / (10 * sum_count)
+            cell["strength"] += cell["count"] * add_energy / (100 * sum_count)
         # 置零
         for cell in self.link_cells:
             cell["count"] = 0
 
     def _update_link(self):
+        for cell in self.link_cells:
+            self.energy += cell["count"]
+            cell["count"] = 0
         if len(self.link_cells) > 2:
             self.energy -= 2.7
             self._check_energy()
