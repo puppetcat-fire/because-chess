@@ -1,23 +1,32 @@
 class Cell:
-    def __init__(self, link_cells):
-        self.state = False
-        self.energy = 0.35
+    def __init__(self, link_cells, energy):
         self.energy_max = 3  # 一分三合理么？ 0.35+0.35+2
-        self.link_cells = link_cells
+        self.survival_time = 0
+        self.state = False
 
+        
+        self.energy = energy
+        self.link_cells = link_cells
+        # [{"cell": cell_0, "weight": 0.3, "count_after_last_activation": 3, "count_after_birth": 20},
+        #  {"cell": cell_1, "weight": 0.5, "count_after_last_activation": 2, "count_after_birth": 15}]
+        # count_after_birth一定小于survival_time
     def run(self):
-        # for cell in self.link_cells:
-        #     print(cell["strength"])
+        # 第一，活着是需要扣能量的。每个细胞能承载的信息是有限的，而更多的细胞能承载更多的信息，但是从环境中摄取的能量却是有限的，而受此影响，精简出来的结构就是确定的。
         self.energy -= 0.01
-        if sum([cell["strength"] for cell in self.link_cells]) > 0.7:
+        self.survival_time += 1
+        # 第二，检查是否需要新建连接？
+        if sum([cell["count_after_birth"]/self.survival_time for cell in self.link_cells]) > 1:
             self._update_link()
+        # 第三，前向传播？将上一轮得到数据向后传递至输出，在这里有一个延迟性，我觉得很重要，但是还没有一个比较好的系统帮我把这个延迟性的功能使用起来。
+        # 并且承载信息是要消耗能量的，接收到1的信息，就需要1的能量。
         for cell in self.link_cells:
             state = cell["cell"].ask_last_state()
             if state:
                 cell["count"] += cell["strength"]
                 self.energy -= cell["strength"]
+        # 第四，检查前向传播后的能量情况，会倾向于将当前的连接减少至断开，而确保本次信息的传输成功。但是会有一个bug，就是跟分裂的联动（0.0.3），会导致在一开始的时候无限向上分裂，然后导致能量不足，断开与输入端的连接。
         self._check_energy()
-        # 前向传播（能量不足？）100:1等比例往下拆连接强度。
+        # 第五，累加更新自己状态。
         if sum([cell["count"] for cell in self.link_cells]) > 0.7:
             self.energy -= 1
             if self.energy >= 1:
@@ -27,6 +36,7 @@ class Cell:
             self.state = True
         else:
             self.state = False
+        # 第六，递归调用前向细胞。
         for cell in self.link_cells:
             state = cell["cell"].run()
 
